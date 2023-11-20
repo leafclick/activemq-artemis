@@ -1906,6 +1906,10 @@ public class OpenWireConnection extends AbstractRemotingConnection implements Se
    }
 
    @Override
+   public String toString() {
+      return "OpenWireConnection [ID=" + getID() + ", clientID=" + getClientID() + ", transportConnection=" + getTransportConnection() + "]";
+   }
+   @Override
    public boolean isSupportsFlowControl() {
       return true;
    }
