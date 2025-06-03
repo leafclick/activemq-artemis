@@ -81,7 +81,7 @@ public class DefaultSensitiveStringCodec implements SensitiveDataCodec<String> {
       String algorithm = params.get(ALGORITHM);
       if (algorithm == null || algorithm.equals(TWO_WAY)) {
          //two way
-         ActiveMQUtilLogger.LOGGER.deprecatedDefaultCodecTwoWayAlgorithm();
+         //ActiveMQUtilLogger.LOGGER.deprecatedDefaultCodecTwoWayAlgorithm();
          this.algorithm = new BlowfishAlgorithm(params);
       } else if (algorithm.equals(ONE_WAY)) {
          this.algorithm = new PBKDF2Algorithm(params);
