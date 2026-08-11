@@ -42,6 +42,8 @@ public interface AuditLogger {
    AuditLogger RESOURCE_LOGGER = BundleFactory.newBundle(AuditLogger.class, "org.apache.activemq.audit.resource");
    AuditLogger MESSAGE_LOGGER = BundleFactory.newBundle(AuditLogger.class, "org.apache.activemq.audit.message");
 
+   String IGNORED_USER = "telegraf(amq,monitoring)";
+
    ThreadLocal<String> remoteAddress = new ThreadLocal<>();
 
    ThreadLocal<Subject> currentCaller = new ThreadLocal<>();
@@ -63,6 +65,13 @@ public interface AuditLogger {
 
    static boolean isMessageLoggingEnabled() {
       return MESSAGE_LOGGER.getLogger().isInfoEnabled();
+   }
+
+   static boolean shouldLog(String user) {
+      if (user == null) {
+         return true;
+      }
+      return !user.startsWith(IGNORED_USER);
    }
 
    /**
@@ -172,21 +181,30 @@ public interface AuditLogger {
    void getRoutingTypesAsJSON(String user, Object source);
 
    static void getQueueNames(Object source, Object... args) {
-      BASE_LOGGER.getQueueNames(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getQueueNames(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601002, value = "User {} is getting queue names on target resource: {} {}", level = LogMessage.Level.INFO)
    void getQueueNames(String user, Object source, String parameters);
 
    static void getBindingNames(Object source) {
-      BASE_LOGGER.getBindingNames(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getBindingNames(caller, source);
+      }
    }
 
    @LogMessage(id = 601003, value = "User {} is getting binding names on target resource: {}", level = LogMessage.Level.INFO)
    void getBindingNames(String user, Object source);
 
    static void getRoles(Object source, Object... args) {
-      BASE_LOGGER.getRoles(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getRoles(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601004, value = "User {} is getting roles on target resource: {} {}", level = LogMessage.Level.INFO)
@@ -200,49 +218,70 @@ public interface AuditLogger {
    void getRolesAsJSON(String user, Object source, String parameters);
 
    static void getNumberOfBytesPerPage(Object source) {
-      BASE_LOGGER.getNumberOfBytesPerPage(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getNumberOfBytesPerPage(caller, source);
+      }
    }
 
    @LogMessage(id = 601006, value = "User {} is getting number of bytes per page on target resource: {}", level = LogMessage.Level.INFO)
    void getNumberOfBytesPerPage(String user, Object source);
 
    static void getAddressSize(Object source) {
-      BASE_LOGGER.getAddressSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAddressSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601007, value = "User {} is getting address size on target resource: {}", level = LogMessage.Level.INFO)
    void getAddressSize(String user, Object source);
 
    static void getNumberOfMessages(Object source) {
-      BASE_LOGGER.getNumberOfMessages(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getNumberOfMessages(caller, source);
+      }
    }
 
    @LogMessage(id = 601008, value = "User {} is getting number of messages on target resource: {}", level = LogMessage.Level.INFO)
    void getNumberOfMessages(String user, Object source);
 
    static void isPaging(Object source) {
-      BASE_LOGGER.isPaging(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isPaging(caller, source);
+      }
    }
 
    @LogMessage(id = 601009, value = "User {} is getting isPaging on target resource: {}", level = LogMessage.Level.INFO)
    void isPaging(String user, Object source);
 
    static void getNumberOfPages(Object source) {
-      BASE_LOGGER.getNumberOfPages(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getNumberOfPages(caller, source);
+      }
    }
 
    @LogMessage(id = 601010, value = "User {} is getting number of pages on target resource: {}", level = LogMessage.Level.INFO)
    void getNumberOfPages(String user, Object source);
 
    static void getRoutedMessageCount(Object source) {
-      BASE_LOGGER.getRoutedMessageCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getRoutedMessageCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601011, value = "User {} is getting routed message count on target resource: {}", level = LogMessage.Level.INFO)
    void getRoutedMessageCount(String user, Object source);
 
    static void getUnRoutedMessageCount(Object source) {
-      BASE_LOGGER.getUnRoutedMessageCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getUnRoutedMessageCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601012, value = "User {} is getting unrouted message count on target resource: {}", level = LogMessage.Level.INFO)
@@ -256,14 +295,20 @@ public interface AuditLogger {
    void sendMessageThroughManagement(String user, Object source, String parameters);
 
    static void getName(Object source) {
-      BASE_LOGGER.getName(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getName(caller, source);
+      }
    }
 
    @LogMessage(id = 601014, value = "User {} is getting name on target resource: {}", level = LogMessage.Level.INFO)
    void getName(String user, Object source);
 
    static void getAddress(Object source) {
-      BASE_LOGGER.getAddress(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAddress(caller, source);
+      }
    }
 
    @LogMessage(id = 601015, value = "User {} is getting address on target resource: {}", level = LogMessage.Level.INFO)
@@ -277,21 +322,30 @@ public interface AuditLogger {
    void getFilter(String user, Object source);
 
    static void isDurable(Object source) {
-      BASE_LOGGER.isDurable(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isDurable(caller, source);
+      }
    }
 
    @LogMessage(id = 601017, value = "User {} is getting durable property on target resource: {}", level = LogMessage.Level.INFO)
    void isDurable(String user, Object source);
 
    static void getMessageCount(Object source) {
-      BASE_LOGGER.getMessageCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessageCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601018, value = "User {} is getting message count on target resource: {}", level = LogMessage.Level.INFO)
    void getMessageCount(String user, Object source);
 
    static void getMBeanInfo(Object source) {
-      BASE_LOGGER.getMBeanInfo(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMBeanInfo(caller, source);
+      }
    }
 
    @LogMessage(id = 601019, value = "User {} is getting mbean info on target resource: {}", level = LogMessage.Level.INFO)
@@ -319,7 +373,10 @@ public interface AuditLogger {
    void reload(String user, Object source);
 
    static void isStarted(Object source) {
-      BASE_LOGGER.isStarted(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isStarted(caller, source);
+      }
    }
 
    @LogMessage(id = 601023, value = "User {} is querying isStarted on target resource: {}", level = LogMessage.Level.INFO)
@@ -340,28 +397,40 @@ public interface AuditLogger {
    void stopAcceptor(String user, Object source);
 
    static void getVersion(Object source) {
-      BASE_LOGGER.getVersion(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getVersion(caller, source);
+      }
    }
 
    @LogMessage(id = 601026, value = "User {} is getting version on target resource: {}", level = LogMessage.Level.INFO)
    void getVersion(String user, Object source);
 
    static void isBackup(Object source) {
-      BASE_LOGGER.isBackup(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isBackup(caller, source);
+      }
    }
 
    @LogMessage(id = 601027, value = "User {} is querying isBackup on target resource: {}", level = LogMessage.Level.INFO)
    void isBackup(String user, Object source);
 
    static void isSharedStore(Object source) {
-      BASE_LOGGER.isSharedStore(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isSharedStore(caller, source);
+      }
    }
 
    @LogMessage(id = 601028, value = "User {} is querying isSharedStore on target resource: {}", level = LogMessage.Level.INFO)
    void isSharedStore(String user, Object source);
 
    static void getBindingsDirectory(Object source) {
-      BASE_LOGGER.getBindingsDirectory(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getBindingsDirectory(caller, source);
+      }
    }
 
    @LogMessage(id = 601029, value = "User {} is getting bindings directory on target resource: {}", level = LogMessage.Level.INFO)
@@ -382,14 +451,20 @@ public interface AuditLogger {
    void getOutgoingInterceptorClassNames(String user, Object source);
 
    static void getJournalBufferSize(Object source) {
-      BASE_LOGGER.getJournalBufferSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getJournalBufferSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601032, value = "User {} is getting journal buffer size on target resource: {}", level = LogMessage.Level.INFO)
    void getJournalBufferSize(String user, Object source);
 
    static void getJournalBufferTimeout(Object source) {
-      BASE_LOGGER.getJournalBufferTimeout(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getJournalBufferTimeout(caller, source);
+      }
    }
 
    @LogMessage(id = 601033, value = "User {} is getting journal buffer timeout on target resource: {}", level = LogMessage.Level.INFO)
@@ -410,168 +485,240 @@ public interface AuditLogger {
    void isFailoverOnServerShutdown(String user, Object source);
 
    static void getJournalMaxIO(Object source) {
-      BASE_LOGGER.getJournalMaxIO(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getJournalMaxIO(caller, source);
+      }
    }
 
    @LogMessage(id = 601036, value = "User {} is getting journal's max io on target resource: {}", level = LogMessage.Level.INFO)
    void getJournalMaxIO(String user, Object source);
 
    static void getJournalDirectory(Object source) {
-      BASE_LOGGER.getJournalDirectory(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getJournalDirectory(caller, source);
+      }
    }
 
    @LogMessage(id = 601037, value = "User {} is getting journal directory on target resource: {}", level = LogMessage.Level.INFO)
    void getJournalDirectory(String user, Object source);
 
    static void getJournalFileSize(Object source) {
-      BASE_LOGGER.getJournalFileSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getJournalFileSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601038, value = "User {} is getting journal file size on target resource: {}", level = LogMessage.Level.INFO)
    void getJournalFileSize(String user, Object source);
 
    static void getJournalMinFiles(Object source) {
-      BASE_LOGGER.getJournalMinFiles(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getJournalMinFiles(caller, source);
+      }
    }
 
    @LogMessage(id = 601039, value = "User {} is getting journal min files on target resource: {}", level = LogMessage.Level.INFO)
    void getJournalMinFiles(String user, Object source);
 
    static void getJournalCompactMinFiles(Object source) {
-      BASE_LOGGER.getJournalCompactMinFiles(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getJournalCompactMinFiles(caller, source);
+      }
    }
 
    @LogMessage(id = 601040, value = "User {} is getting journal compact min files on target resource: {}", level = LogMessage.Level.INFO)
    void getJournalCompactMinFiles(String user, Object source);
 
    static void getJournalCompactPercentage(Object source) {
-      BASE_LOGGER.getJournalCompactPercentage(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getJournalCompactPercentage(caller, source);
+      }
    }
 
    @LogMessage(id = 601041, value = "User {} is getting journal compact percentage on target resource: {}", level = LogMessage.Level.INFO)
    void getJournalCompactPercentage(String user, Object source);
 
    static void isPersistenceEnabled(Object source) {
-      BASE_LOGGER.isPersistenceEnabled(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isPersistenceEnabled(caller, source);
+      }
    }
 
    @LogMessage(id = 601042, value = "User {} is querying persistence enabled on target resource: {}", level = LogMessage.Level.INFO)
    void isPersistenceEnabled(String user, Object source);
 
    static void getJournalType(Object source) {
-      BASE_LOGGER.getJournalType(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getJournalType(caller, source);
+      }
    }
 
    @LogMessage(id = 601043, value = "User {} is getting journal type on target resource: {}", level = LogMessage.Level.INFO)
    void getJournalType(String user, Object source);
 
    static void getPagingDirectory(Object source) {
-      BASE_LOGGER.getPagingDirectory(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getPagingDirectory(caller, source);
+      }
    }
 
    @LogMessage(id = 601044, value = "User {} is getting paging directory on target resource: {}", level = LogMessage.Level.INFO)
    void getPagingDirectory(String user, Object source);
 
    static void getScheduledThreadPoolMaxSize(Object source) {
-      BASE_LOGGER.getScheduledThreadPoolMaxSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getScheduledThreadPoolMaxSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601045, value = "User {} is getting scheduled threadpool max size on target resource: {}", level = LogMessage.Level.INFO)
    void getScheduledThreadPoolMaxSize(String user, Object source);
 
    static void getThreadPoolMaxSize(Object source) {
-      BASE_LOGGER.getThreadPoolMaxSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getThreadPoolMaxSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601046, value = "User {} is getting threadpool max size on target resource: {}", level = LogMessage.Level.INFO)
    void getThreadPoolMaxSize(String user, Object source);
 
    static void getSecurityInvalidationInterval(Object source) {
-      BASE_LOGGER.getSecurityInvalidationInterval(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getSecurityInvalidationInterval(caller, source);
+      }
    }
 
    @LogMessage(id = 601047, value = "User {} is getting security invalidation interval on target resource: {}", level = LogMessage.Level.INFO)
    void getSecurityInvalidationInterval(String user, Object source);
 
    static void isClustered(Object source) {
-      BASE_LOGGER.isClustered(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isClustered(caller, source);
+      }
    }
 
    @LogMessage(id = 601048, value = "User {} is querying is-clustered on target resource: {}", level = LogMessage.Level.INFO)
    void isClustered(String user, Object source);
 
    static void isCreateBindingsDir(Object source) {
-      BASE_LOGGER.isCreateBindingsDir(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isCreateBindingsDir(caller, source);
+      }
    }
 
    @LogMessage(id = 601049, value = "User {} is querying is-create-bindings-dir on target resource: {}", level = LogMessage.Level.INFO)
    void isCreateBindingsDir(String user, Object source);
 
    static void isCreateJournalDir(Object source) {
-      BASE_LOGGER.isCreateJournalDir(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isCreateJournalDir(caller, source);
+      }
    }
 
    @LogMessage(id = 601050, value = "User {} is querying is-create-journal-dir on target resource: {}", level = LogMessage.Level.INFO)
    void isCreateJournalDir(String user, Object source);
 
    static void isJournalSyncNonTransactional(Object source) {
-      BASE_LOGGER.isJournalSyncNonTransactional(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isJournalSyncNonTransactional(caller, source);
+      }
    }
 
    @LogMessage(id = 601051, value = "User {} is querying is-journal-sync-non-transactional on target resource: {}", level = LogMessage.Level.INFO)
    void isJournalSyncNonTransactional(String user, Object source);
 
    static void isJournalSyncTransactional(Object source) {
-      BASE_LOGGER.isJournalSyncTransactional(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isJournalSyncTransactional(caller, source);
+      }
    }
 
    @LogMessage(id = 601052, value = "User {} is querying is-journal-sync-transactional on target resource: {}", level = LogMessage.Level.INFO)
    void isJournalSyncTransactional(String user, Object source);
 
    static void isSecurityEnabled(Object source) {
-      BASE_LOGGER.isSecurityEnabled(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isSecurityEnabled(caller, source);
+      }
    }
 
    @LogMessage(id = 601053, value = "User {} is querying is-security-enabled on target resource: {}", level = LogMessage.Level.INFO)
    void isSecurityEnabled(String user, Object source);
 
    static void isAsyncConnectionExecutionEnabled(Object source) {
-      BASE_LOGGER.isAsyncConnectionExecutionEnabled(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isAsyncConnectionExecutionEnabled(caller, source);
+      }
    }
 
    @LogMessage(id = 601054, value = "User {} is querying is-async-connection-execution-enabled on target resource: {}", level = LogMessage.Level.INFO)
    void isAsyncConnectionExecutionEnabled(String user, Object source);
 
    static void getDiskScanPeriod(Object source) {
-      BASE_LOGGER.getDiskScanPeriod(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getDiskScanPeriod(caller, source);
+      }
    }
 
    @LogMessage(id = 601055, value = "User {} is getting disk scan period on target resource: {}", level = LogMessage.Level.INFO)
    void getDiskScanPeriod(String user, Object source);
 
    static void getMaxDiskUsage(Object source) {
-      BASE_LOGGER.getMaxDiskUsage(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMaxDiskUsage(caller, source);
+      }
    }
 
    @LogMessage(id = 601056, value = "User {} is getting max disk usage on target resource: {}", level = LogMessage.Level.INFO)
    void getMaxDiskUsage(String user, Object source);
 
    static void getGlobalMaxSize(Object source) {
-      BASE_LOGGER.getGlobalMaxSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getGlobalMaxSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601057, value = "User {} is getting global max size on target resource: {}", level = LogMessage.Level.INFO)
    void getGlobalMaxSize(String user, Object source);
 
    static void getAddressMemoryUsage(Object source) {
-      BASE_LOGGER.getAddressMemoryUsage(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAddressMemoryUsage(caller, source);
+      }
    }
 
    @LogMessage(id = 601058, value = "User {} is getting address memory usage on target resource: {}", level = LogMessage.Level.INFO)
    void getAddressMemoryUsage(String user, Object source);
 
    static void getAddressMemoryUsagePercentage(Object source) {
-      BASE_LOGGER.getAddressMemoryUsagePercentage(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAddressMemoryUsagePercentage(caller, source);
+      }
    }
 
    @LogMessage(id = 601059, value = "User {} is getting address memory usage percentage on target resource: {}", level = LogMessage.Level.INFO)
@@ -627,35 +774,50 @@ public interface AuditLogger {
    void updateQueue(String user, Object source, String args);
 
    static void getClusterConnectionNames(Object source) {
-      BASE_LOGGER.getClusterConnectionNames(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getClusterConnectionNames(caller, source);
+      }
    }
 
    @LogMessage(id = 601067, value = "User {} is getting cluster connection names on target resource: {}", level = LogMessage.Level.INFO)
    void getClusterConnectionNames(String user, Object source);
 
    static void getUptime(Object source) {
-      BASE_LOGGER.getUptime(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getUptime(caller, source);
+      }
    }
 
    @LogMessage(id = 601068, value = "User {} is getting uptime on target resource: {}", level = LogMessage.Level.INFO)
    void getUptime(String user, Object source);
 
    static void getUptimeMillis(Object source) {
-      BASE_LOGGER.getUptimeMillis(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getUptimeMillis(caller, source);
+      }
    }
 
    @LogMessage(id = 601069, value = "User {} is getting uptime in milliseconds on target resource: {}", level = LogMessage.Level.INFO)
    void getUptimeMillis(String user, Object source);
 
    static void isReplicaSync(Object source) {
-      BASE_LOGGER.isReplicaSync(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isReplicaSync(caller, source);
+      }
    }
 
    @LogMessage(id = 601070, value = "User {} is querying is-replica-sync on target resource: {}", level = LogMessage.Level.INFO)
    void isReplicaSync(String user, Object source);
 
    static void getAddressNames(Object source) {
-      BASE_LOGGER.getAddressNames(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAddressNames(caller, source);
+      }
    }
 
    @LogMessage(id = 601071, value = "User {} is getting address names on target resource: {}", level = LogMessage.Level.INFO)
@@ -669,7 +831,10 @@ public interface AuditLogger {
    void destroyQueue(String user, Object source, String args);
 
    static void getAddressInfo(Object source, Object... args) {
-      BASE_LOGGER.getAddressInfo(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAddressInfo(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601073, value = "User {} is getting address info on target resource: {} {}", level = LogMessage.Level.INFO)
@@ -683,49 +848,70 @@ public interface AuditLogger {
    void listBindingsForAddress(String user, Object source, String args);
 
    static void listAddresses(Object source, Object... args) {
-      BASE_LOGGER.listAddresses(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.listAddresses(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601075, value = "User {} is listing addresses on target resource: {} {}", level = LogMessage.Level.INFO)
    void listAddresses(String user, Object source, String args);
 
    static void getConnectionCount(Object source, Object... args) {
-      BASE_LOGGER.getConnectionCount(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getConnectionCount(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601076, value = "User {} is getting connection count on target resource: {} {}", level = LogMessage.Level.INFO)
    void getConnectionCount(String user, Object source, String args);
 
    static void getTotalConnectionCount(Object source) {
-      BASE_LOGGER.getTotalConnectionCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getTotalConnectionCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601077, value = "User {} is getting total connection count on target resource: {}", level = LogMessage.Level.INFO)
    void getTotalConnectionCount(String user, Object source);
 
    static void getTotalMessageCount(Object source) {
-      BASE_LOGGER.getTotalMessageCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getTotalMessageCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601078, value = "User {} is getting total message count on target resource: {}", level = LogMessage.Level.INFO)
    void getTotalMessageCount(String user, Object source);
 
    static void getTotalMessagesAdded(Object source) {
-      BASE_LOGGER.getTotalMessagesAdded(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getTotalMessagesAdded(caller, source);
+      }
    }
 
    @LogMessage(id = 601079, value = "User {} is getting total messages added on target resource: {}", level = LogMessage.Level.INFO)
    void getTotalMessagesAdded(String user, Object source);
 
    static void getTotalMessagesAcknowledged(Object source) {
-      BASE_LOGGER.getTotalMessagesAcknowledged(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getTotalMessagesAcknowledged(caller, source);
+      }
    }
 
    @LogMessage(id = 601080, value = "User {} is getting total messages acknowledged on target resource: {}", level = LogMessage.Level.INFO)
    void getTotalMessagesAcknowledged(String user, Object source);
 
    static void getTotalConsumerCount(Object source) {
-      BASE_LOGGER.getTotalConsumerCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getTotalConsumerCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601081, value = "User {} is getting total consumer count on target resource: {}", level = LogMessage.Level.INFO)
@@ -760,28 +946,40 @@ public interface AuditLogger {
    void resetAllMessageCounterHistories(String user, Object source);
 
    static void isMessageCounterEnabled(Object source) {
-      BASE_LOGGER.isMessageCounterEnabled(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isMessageCounterEnabled(caller, source);
+      }
    }
 
    @LogMessage(id = 601086, value = "User {} is querying is-message-counter-enabled on target resource: {}", level = LogMessage.Level.INFO)
    void isMessageCounterEnabled(String user, Object source);
 
    static void getMessageCounterSamplePeriod(Object source) {
-      BASE_LOGGER.getMessageCounterSamplePeriod(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessageCounterSamplePeriod(caller, source);
+      }
    }
 
    @LogMessage(id = 601087, value = "User {} is getting message counter sample period on target resource: {}", level = LogMessage.Level.INFO)
    void getMessageCounterSamplePeriod(String user, Object source);
 
    static void setMessageCounterSamplePeriod(Object source, Object... args) {
-      BASE_LOGGER.setMessageCounterSamplePeriod(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.setMessageCounterSamplePeriod(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601088, value = "User {} is setting message counter sample period on target resource: {} {}", level = LogMessage.Level.INFO)
    void setMessageCounterSamplePeriod(String user, Object source, String args);
 
    static void getMessageCounterMaxDayCount(Object source) {
-      BASE_LOGGER.getMessageCounterMaxDayCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessageCounterMaxDayCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601089, value = "User {} is getting message counter max day count on target resource: {}", level = LogMessage.Level.INFO)
@@ -795,7 +993,10 @@ public interface AuditLogger {
    void setMessageCounterMaxDayCount(String user, Object source, String args);
 
    static void listPreparedTransactions(Object source) {
-      BASE_LOGGER.listPreparedTransactions(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.listPreparedTransactions(caller, source);
+      }
    }
 
    @LogMessage(id = 601091, value = "User {} is listing prepared transactions on target resource: {}", level = LogMessage.Level.INFO)
@@ -816,14 +1017,20 @@ public interface AuditLogger {
    void listPreparedTransactionDetailsAsHTML(String user, Object source, String args);
 
    static void listHeuristicCommittedTransactions(Object source) {
-      BASE_LOGGER.listHeuristicCommittedTransactions(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.listHeuristicCommittedTransactions(caller, source);
+      }
    }
 
    @LogMessage(id = 601094, value = "User {} is listing heuristic committed transactions on target resource: {}", level = LogMessage.Level.INFO)
    void listHeuristicCommittedTransactions(String user, Object source);
 
    static void listHeuristicRolledBackTransactions(Object source) {
-      BASE_LOGGER.listHeuristicRolledBackTransactions(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.listHeuristicRolledBackTransactions(caller, source);
+      }
    }
 
    @LogMessage(id = 601095, value = "User {} is listing heuristic rolled back transactions on target resource: {}", level = LogMessage.Level.INFO)
@@ -844,7 +1051,10 @@ public interface AuditLogger {
    void rollbackPreparedTransaction(String user, Object source, String args);
 
    static void listRemoteAddresses(Object source, Object... args) {
-      BASE_LOGGER.listRemoteAddresses(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.listRemoteAddresses(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601098, value = "User {} is listing remote addresses on target resource: {} {}", level = LogMessage.Level.INFO)
@@ -893,14 +1103,20 @@ public interface AuditLogger {
    void closeConsumerWithID(String user, Object source, String args);
 
    static void listConnectionIDs(Object source) {
-      BASE_LOGGER.listConnectionIDs(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.listConnectionIDs(caller, source);
+      }
    }
 
    @LogMessage(id = 601105, value = "User {} is listing connection IDs on target resource: {}", level = LogMessage.Level.INFO)
    void listConnectionIDs(String user, Object source);
 
    static void listSessions(Object source, Object... args) {
-      BASE_LOGGER.listSessions(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.listSessions(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601106, value = "User {} is listing sessions on target resource: {} {}", level = LogMessage.Level.INFO)
@@ -914,28 +1130,40 @@ public interface AuditLogger {
    void listProducersInfoAsJSON(String user, Object source);
 
    static void listConnections(Object source, Object... args) {
-      BASE_LOGGER.listConnections(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.listConnections(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601108, value = "User {} is listing connections on target resource: {} {}", level = LogMessage.Level.INFO)
    void listConnections(String user, Object source, String args);
 
    static void listConsumers(Object source, Object... args) {
-      BASE_LOGGER.listConsumers(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.listConsumers(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601109, value = "User {} is listing consumers on target resource: {} {}", level = LogMessage.Level.INFO)
    void listConsumers(String user, Object source, String args);
 
    static void listQueues(Object source, Object... args) {
-      BASE_LOGGER.listQueues(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.listQueues(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601110, value = "User {} is listing queues on target resource: {} {}", level = LogMessage.Level.INFO)
    void listQueues(String user, Object source, String arg);
 
    static void listProducers(Object source, Object... args) {
-      BASE_LOGGER.listProducers(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.listProducers(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601111, value = "User {} is listing producers on target resource: {} {}", level = LogMessage.Level.INFO)
@@ -977,7 +1205,10 @@ public interface AuditLogger {
    void listAllConsumersAsJSON(String user, Object source);
 
    static void getConnectors(Object source) {
-      BASE_LOGGER.getConnectors(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getConnectors(caller, source);
+      }
    }
 
    @LogMessage(id = 601117, value = "User {} is getting connectors on target resource: {}", level = LogMessage.Level.INFO)
@@ -1131,21 +1362,30 @@ public interface AuditLogger {
    void getNotificationInfo(String user, Object source);
 
    static void getConnectionTTLOverride(Object source) {
-      BASE_LOGGER.getConnectionTTLOverride(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getConnectionTTLOverride(caller, source);
+      }
    }
 
    @LogMessage(id = 601139, value = "User {} is getting connection ttl override on target resource: {}", level = LogMessage.Level.INFO)
    void getConnectionTTLOverride(String user, Object source);
 
    static void getIDCacheSize(Object source) {
-      BASE_LOGGER.getIDCacheSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getIDCacheSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601140, value = "User {} is getting ID cache size on target resource: {}", level = LogMessage.Level.INFO)
    void getIDCacheSize(String user, Object source);
 
    static void getLargeMessagesDirectory(Object source) {
-      BASE_LOGGER.getLargeMessagesDirectory(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getLargeMessagesDirectory(caller, source);
+      }
    }
 
    @LogMessage(id = 601141, value = "User {} is getting large message directory on target resource: {}", level = LogMessage.Level.INFO)
@@ -1159,7 +1399,11 @@ public interface AuditLogger {
    void getManagementAddress(String user, Object source);
 
    static void getNodeID(Object source) {
-      BASE_LOGGER.getNodeID(getCaller(), source);
+      final String caller = getCaller();
+
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getNodeID(caller, source);
+      }
    }
 
    @LogMessage(id = 601143, value = "User {} is getting node ID on target resource: {}", level = LogMessage.Level.INFO)
@@ -1173,42 +1417,62 @@ public interface AuditLogger {
    void getManagementNotificationAddress(String user, Object source);
 
    static void getMessageExpiryScanPeriod(Object source) {
-      BASE_LOGGER.getMessageExpiryScanPeriod(getCaller(), source);
+      final String caller = getCaller();
+
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessageExpiryScanPeriod(caller, source);
+      }
    }
 
    @LogMessage(id = 601145, value = "User {} is getting message expiry scan period on target resource: {}", level = LogMessage.Level.INFO)
    void getMessageExpiryScanPeriod(String user, Object source);
 
    static void getMessageExpiryThreadPriority(Object source) {
-      BASE_LOGGER.getMessageExpiryThreadPriority(getCaller(), source);
+      final String caller = getCaller();
+
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessageExpiryThreadPriority(caller, source);
+      }
    }
 
    @LogMessage(id = 601146, value = "User {} is getting message expiry thread priority on target resource: {}", level = LogMessage.Level.INFO)
    void getMessageExpiryThreadPriority(String user, Object source);
 
    static void getTransactionTimeout(Object source) {
-      BASE_LOGGER.getTransactionTimeout(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getTransactionTimeout(caller, source);
+      }
    }
 
    @LogMessage(id = 601147, value = "User {} is getting transaction timeout on target resource: {}", level = LogMessage.Level.INFO)
    void getTransactionTimeout(String user, Object source);
 
    static void getTransactionTimeoutScanPeriod(Object source) {
-      BASE_LOGGER.getTransactionTimeoutScanPeriod(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getTransactionTimeoutScanPeriod(caller, source);
+      }
    }
 
    @LogMessage(id = 601148, value = "User {} is getting transaction timeout scan period on target resource: {}", level = LogMessage.Level.INFO)
    void getTransactionTimeoutScanPeriod(String user, Object source);
 
    static void isPersistDeliveryCountBeforeDelivery(Object source) {
-      BASE_LOGGER.isPersistDeliveryCountBeforeDelivery(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isPersistDeliveryCountBeforeDelivery(caller, source);
+      }
    }
 
    @LogMessage(id = 601149, value = "User {} is querying is-persist-delivery-before-delivery on target resource: {}", level = LogMessage.Level.INFO)
    void isPersistDeliveryCountBeforeDelivery(String user, Object source);
 
    static void isPersistIDCache(Object source) {
-      BASE_LOGGER.isPersistIDCache(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isPersistIDCache(caller, source);
+      }
    }
 
    @LogMessage(id = 601150, value = "User {} is querying is-persist-id-cache on target resource: {}", level = LogMessage.Level.INFO)
@@ -1264,91 +1528,130 @@ public interface AuditLogger {
    void getRoutingType(String user, Object source);
 
    static void isTemporary(Object source) {
-      BASE_LOGGER.isTemporary(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isTemporary(caller, source);
+      }
    }
 
    @LogMessage(id = 601158, value = "User {} is getting temporary property on target resource: {}", level = LogMessage.Level.INFO)
    void isTemporary(String user, Object source);
 
    static void getPersistentSize(Object source) {
-      BASE_LOGGER.getPersistentSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getPersistentSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601159, value = "User {} is getting persistent size on target resource: {}", level = LogMessage.Level.INFO)
    void getPersistentSize(String user, Object source);
 
    static void getDurableMessageCount(Object source) {
-      BASE_LOGGER.getDurableMessageCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getDurableMessageCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601160, value = "User {} is getting durable message count on target resource: {}", level = LogMessage.Level.INFO)
    void getDurableMessageCount(String user, Object source);
 
    static void getDurablePersistSize(Object source) {
-      BASE_LOGGER.getDurablePersistSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getDurablePersistSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601161, value = "User {} is getting durable persist size on target resource: {}", level = LogMessage.Level.INFO)
    void getDurablePersistSize(String user, Object source);
 
    static void getConsumerCount(Object source) {
-      BASE_LOGGER.getConsumerCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getConsumerCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601162, value = "User {} is getting consumer count on target resource: {}", level = LogMessage.Level.INFO)
    void getConsumerCount(String user, Object source);
 
    static void getDeliveringCount(Object source) {
-      BASE_LOGGER.getDeliveringCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getDeliveringCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601163, value = "User {} is getting delivering count on target resource: {}", level = LogMessage.Level.INFO)
    void getDeliveringCount(String user, Object source);
 
    static void getDeliveringSize(Object source) {
-      BASE_LOGGER.getDeliveringSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getDeliveringSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601164, value = "User {} is getting delivering size on target resource: {}", level = LogMessage.Level.INFO)
    void getDeliveringSize(String user, Object source);
 
    static void getDurableDeliveringCount(Object source) {
-      BASE_LOGGER.getDurableDeliveringCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getDurableDeliveringCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601165, value = "User {} is getting durable delivering count on target resource: {}", level = LogMessage.Level.INFO)
    void getDurableDeliveringCount(String user, Object source);
 
    static void getDurableDeliveringSize(Object source) {
-      BASE_LOGGER.getDurableDeliveringSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getDurableDeliveringSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601166, value = "User {} is getting durable delivering size on target resource: {}", level = LogMessage.Level.INFO)
    void getDurableDeliveringSize(String user, Object source);
 
    static void getMessagesAdded(Object source) {
-      BASE_LOGGER.getMessagesAdded(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessagesAdded(caller, source);
+      }
    }
 
    @LogMessage(id = 601167, value = "User {} is getting messages added on target resource: {}", level = LogMessage.Level.INFO)
    void getMessagesAdded(String user, Object source);
 
    static void getMessagesAcknowledged(Object source) {
-      BASE_LOGGER.getMessagesAcknowledged(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessagesAcknowledged(caller, source);
+      }
    }
 
    @LogMessage(id = 601168, value = "User {} is getting messages acknowledged on target resource: {}", level = LogMessage.Level.INFO)
    void getMessagesAcknowledged(String user, Object source);
 
    static void getMessagesExpired(Object source) {
-      BASE_LOGGER.getMessagesExpired(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessagesExpired(caller, source);
+      }
    }
 
    @LogMessage(id = 601169, value = "User {} is getting messages expired on target resource: {}", level = LogMessage.Level.INFO)
    void getMessagesExpired(String user, Object source);
 
    static void getMessagesKilled(Object source) {
-      BASE_LOGGER.getMessagesKilled(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessagesKilled(caller, source);
+      }
    }
 
    @LogMessage(id = 601170, value = "User {} is getting messages killed on target resource: {}", level = LogMessage.Level.INFO)
@@ -1362,28 +1665,40 @@ public interface AuditLogger {
    void getID(String user, Object source);
 
    static void getScheduledCount(Object source) {
-      BASE_LOGGER.getScheduledCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getScheduledCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601172, value = "User {} is getting scheduled count on target resource: {}", level = LogMessage.Level.INFO)
    void getScheduledCount(String user, Object source);
 
    static void getScheduledSize(Object source) {
-      BASE_LOGGER.getScheduledSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getScheduledSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601173, value = "User {} is getting scheduled size on target resource: {}", level = LogMessage.Level.INFO)
    void getScheduledSize(String user, Object source);
 
    static void getDurableScheduledCount(Object source) {
-      BASE_LOGGER.getDurableScheduledCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getDurableScheduledCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601174, value = "User {} is getting durable scheduled count on target resource: {}", level = LogMessage.Level.INFO)
    void getDurableScheduledCount(String user, Object source);
 
    static void getDurableScheduledSize(Object source) {
-      BASE_LOGGER.getDurableScheduledSize(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getDurableScheduledSize(caller, source);
+      }
    }
 
    @LogMessage(id = 601175, value = "User {} is getting durable scheduled size on target resource: {}", level = LogMessage.Level.INFO)
@@ -1397,42 +1712,60 @@ public interface AuditLogger {
    void getDeadLetterAddress(String user, Object source);
 
    static void getExpiryAddress(Object source) {
-      BASE_LOGGER.getExpiryAddress(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getExpiryAddress(caller, source);
+      }
    }
 
    @LogMessage(id = 601177, value = "User {} is getting expiry address on target resource: {}", level = LogMessage.Level.INFO)
    void getExpiryAddress(String user, Object source);
 
    static void getMaxConsumers(Object source) {
-      BASE_LOGGER.getMaxConsumers(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMaxConsumers(caller, source);
+      }
    }
 
    @LogMessage(id = 601178, value = "User {} is getting max consumers on target resource: {}", level = LogMessage.Level.INFO)
    void getMaxConsumers(String user, Object source);
 
    static void isPurgeOnNoConsumers(Object source) {
-      BASE_LOGGER.isPurgeOnNoConsumers(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isPurgeOnNoConsumers(caller, source);
+      }
    }
 
    @LogMessage(id = 601179, value = "User {} is getting purge-on-consumers property on target resource: {}", level = LogMessage.Level.INFO)
    void isPurgeOnNoConsumers(String user, Object source);
 
    static void isConfigurationManaged(Object source) {
-      BASE_LOGGER.isConfigurationManaged(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isConfigurationManaged(caller, source);
+      }
    }
 
    @LogMessage(id = 601180, value = "User {} is getting configuration-managed property on target resource: {}", level = LogMessage.Level.INFO)
    void isConfigurationManaged(String user, Object source);
 
    static void isExclusive(Object source) {
-      BASE_LOGGER.isExclusive(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isExclusive(caller, source);
+      }
    }
 
    @LogMessage(id = 601181, value = "User {} is getting exclusive property on target resource: {}", level = LogMessage.Level.INFO)
    void isExclusive(String user, Object source);
 
    static void isLastValue(Object source) {
-      BASE_LOGGER.isLastValue(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isLastValue(caller, source);
+      }
    }
 
    @LogMessage(id = 601182, value = "User {} is getting last-value property on target resource: {}", level = LogMessage.Level.INFO)
@@ -1481,7 +1814,10 @@ public interface AuditLogger {
    void listMessagesAsJSON(String user, Object source);
 
    static void getFirstMessage(Object source) {
-      BASE_LOGGER.getFirstMessage(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getFirstMessage(caller, source);
+      }
    }
 
    @LogMessage(id = 601189, value = "User {} is getting first message on target resource: {}", level = LogMessage.Level.INFO)
@@ -1495,14 +1831,20 @@ public interface AuditLogger {
    void getFirstMessageAsJSON(String user, Object source);
 
    static void getFirstMessageTimestamp(Object source) {
-      BASE_LOGGER.getFirstMessageTimestamp(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getFirstMessageTimestamp(caller, source);
+      }
    }
 
    @LogMessage(id = 601191, value = "User {} is getting first message's timestamp on target resource: {}", level = LogMessage.Level.INFO)
    void getFirstMessageTimestamp(String user, Object source);
 
    static void getFirstMessageAge(Object source) {
-      BASE_LOGGER.getFirstMessageAge(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getFirstMessageAge(caller, source);
+      }
    }
 
    @LogMessage(id = 601192, value = "User {} is getting first message's age on target resource: {}", level = LogMessage.Level.INFO)
@@ -1656,7 +1998,10 @@ public interface AuditLogger {
    void resume(String user, Object source);
 
    static void isPaused(Object source) {
-      BASE_LOGGER.isPaused(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isPaused(caller, source);
+      }
    }
 
    @LogMessage(id = 601214, value = "User {} is getting paused property on target resource: {}", level = LogMessage.Level.INFO)
@@ -1691,7 +2036,10 @@ public interface AuditLogger {
    void resetGroup(String user, Object source, String arg);
 
    static void getGroupCount(Object source, Object... args) {
-      BASE_LOGGER.getGroupCount(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getGroupCount(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601219, value = "User {} is getting group count on target resource: {} {}", level = LogMessage.Level.INFO)
@@ -1845,21 +2193,30 @@ public interface AuditLogger {
    void stopBridge(String user, Object source);
 
    static void getMessagesPendingAcknowledgement(Object source) {
-      BASE_LOGGER.getMessagesPendingAcknowledgement(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessagesPendingAcknowledgement(caller, source);
+      }
    }
 
    @LogMessage(id = 601241, value = "User {} is getting messages pending acknowledgement on target resource: {}", level = LogMessage.Level.INFO)
    void getMessagesPendingAcknowledgement(String user, Object source);
 
    static void getMetrics(Object source) {
-      BASE_LOGGER.getMetrics(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMetrics(caller, source);
+      }
    }
 
    @LogMessage(id = 601242, value = "User {} is getting metrics on target resource: {}", level = LogMessage.Level.INFO)
    void getMetrics(String user, Object source);
 
    static void getBroadcastPeriod(Object source) {
-      BASE_LOGGER.getBroadcastPeriod(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getBroadcastPeriod(caller, source);
+      }
    }
 
    @LogMessage(id = 601243, value = "User {} is getting broadcast period on target resource: {}", level = LogMessage.Level.INFO)
@@ -2058,35 +2415,50 @@ public interface AuditLogger {
    void isRetroactiveResource(String user, Object source);
 
    static void getDiskStoreUsage(Object source) {
-      BASE_LOGGER.getDiskStoreUsage(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getDiskStoreUsage(caller, source);
+      }
    }
 
    @LogMessage(id = 601272, value = "User {} is getting disk store usage on target resource: {}", level = LogMessage.Level.INFO)
    void getDiskStoreUsage(String user, Object source);
 
    static void getDiskStoreUsagePercentage(Object source) {
-      BASE_LOGGER.getDiskStoreUsagePercentage(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getDiskStoreUsagePercentage(caller, source);
+      }
    }
 
    @LogMessage(id = 601273, value = "User {} is getting disk store usage percentage on target resource: {}", level = LogMessage.Level.INFO)
    void getDiskStoreUsagePercentage(String user, Object source);
 
    static void isGroupRebalance(Object source) {
-      BASE_LOGGER.isGroupRebalance(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isGroupRebalance(caller, source);
+      }
    }
 
    @LogMessage(id = 601274, value = "User {} is getting group rebalance property on target resource: {}", level = LogMessage.Level.INFO)
    void isGroupRebalance(String user, Object source);
 
    static void getGroupBuckets(Object source) {
-      BASE_LOGGER.getGroupBuckets(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getGroupBuckets(caller, source);
+      }
    }
 
    @LogMessage(id = 601275, value = "User {} is getting group buckets on target resource: {}", level = LogMessage.Level.INFO)
    void getGroupBuckets(String user, Object source);
 
    static void getGroupFirstKey(Object source) {
-      BASE_LOGGER.getGroupFirstKey(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getGroupFirstKey(caller, source);
+      }
    }
 
    @LogMessage(id = 601276, value = "User {} is getting group first key on target resource: {}", level = LogMessage.Level.INFO)
@@ -2130,7 +2502,10 @@ public interface AuditLogger {
    void getFile(String user, Object source);
 
    static void getPreparedTransactionMessageCount(Object source) {
-      BASE_LOGGER.getPreparedTransactionMessageCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getPreparedTransactionMessageCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601514, value = "User {} is getting preparedTransactionMessageCount property on target resource: {}", level = LogMessage.Level.INFO)
@@ -2460,14 +2835,20 @@ public interface AuditLogger {
    void startBrokerConnection(String user, String name);
 
    static void getAddressCount(Object source) {
-      BASE_LOGGER.getAddressCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAddressCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601741, value = "User {} is getting address count on target resource: {}", level = LogMessage.Level.INFO)
    void getAddressCount(String user, Object source);
 
    static void getQueueCount(Object source) {
-      BASE_LOGGER.getQueueCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getQueueCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601742, value = "User {} is getting the queue count on target resource: {}", level = LogMessage.Level.INFO)
@@ -2481,28 +2862,40 @@ public interface AuditLogger {
    void lastValueKey(String user, Object source);
 
    static void consumersBeforeDispatch(Object source) {
-      BASE_LOGGER.consumersBeforeDispatch(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.consumersBeforeDispatch(caller, source);
+      }
    }
 
    @LogMessage(id = 601744, value = "User {} is getting consumers-before-dispatch property on target resource: {}", level = LogMessage.Level.INFO)
    void consumersBeforeDispatch(String user, Object source);
 
    static void delayBeforeDispatch(Object source) {
-      BASE_LOGGER.delayBeforeDispatch(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.delayBeforeDispatch(caller, source);
+      }
    }
 
    @LogMessage(id = 601745, value = "User {} is getting delay-before-dispatch property on target resource: {}", level = LogMessage.Level.INFO)
    void delayBeforeDispatch(String user, Object source);
 
    static void isInternal(Object source) {
-      BASE_LOGGER.isInternal(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isInternal(caller, source);
+      }
    }
 
    @LogMessage(id = 601746, value = "User {} is getting internal property on target resource: {}", level = LogMessage.Level.INFO)
    void isInternal(String user, Object source);
 
    static void isAutoCreated(Object source) {
-      BASE_LOGGER.isAutoCreated(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isAutoCreated(caller, source);
+      }
    }
 
    @LogMessage(id = 601747, value = "User {} is getting auto-created property on target resource: {}", level = LogMessage.Level.INFO)
@@ -2546,7 +2939,10 @@ public interface AuditLogger {
    void purgeAddressFailure(String user, String queueName);
 
    static void getAddressLimitPercent(Object source) {
-      BASE_LOGGER.getAddressLimitPercent(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAddressLimitPercent(caller, source);
+      }
    }
 
    @LogMessage(id = 601753, value = "User {} is getting address limit %  on target resource: {}", level = LogMessage.Level.INFO)
@@ -2640,7 +3036,10 @@ public interface AuditLogger {
    void getStatus(String user, Object source);
 
    static void isAutoDelete(Object source) {
-      BASE_LOGGER.isAutoDelete(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.isAutoDelete(caller, source);
+      }
    }
 
    @LogMessage(id = 601766, value = "User {} is getting auto-delete property on target resource: {}", level = LogMessage.Level.INFO)
@@ -2703,7 +3102,10 @@ public interface AuditLogger {
    void peekFirstScheduledMessageAsJSON(String user, Object source);
 
    static void peekFirstMessage(Object source) {
-      BASE_LOGGER.peekFirstMessage(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.peekFirstMessage(caller, source);
+      }
    }
 
    @LogMessage(id = 601775, value = "User {} is getting first message on target resource: {}", level = LogMessage.Level.INFO)
@@ -2724,28 +3126,40 @@ public interface AuditLogger {
    void getBrokerPluginClassNames(String user, Object source);
 
    static void getAuthenticationSuccessCount(Object source) {
-      BASE_LOGGER.getAuthenticationSuccessCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAuthenticationSuccessCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601778, value = "User {} is getting authentication success count on target resource: {}", level = LogMessage.Level.INFO)
    void getAuthenticationSuccessCount(String user, Object source);
 
    static void getAuthenticationFailureCount(Object source) {
-      BASE_LOGGER.getAuthenticationFailureCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAuthenticationFailureCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601779, value = "User {} is getting authentication failure count on target resource: {}", level = LogMessage.Level.INFO)
    void getAuthenticationFailureCount(String user, Object source);
 
    static void getAuthorizationSuccessCount(Object source) {
-      BASE_LOGGER.getAuthorizationSuccessCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAuthorizationSuccessCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601780, value = "User {} is getting authorization success count on target resource: {}", level = LogMessage.Level.INFO)
    void getAuthorizationSuccessCount(String user, Object source);
 
    static void getAuthorizationFailureCount(Object source) {
-      BASE_LOGGER.getAuthorizationFailureCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getAuthorizationFailureCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601781, value = "User {} is getting authorization failure count on target resource: {}", level = LogMessage.Level.INFO)
@@ -2801,7 +3215,10 @@ public interface AuditLogger {
    void getPriority(String user, Object source);
 
    static void getMessagesReceived(Object source) {
-      BASE_LOGGER.getMessagesReceived(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessagesReceived(caller, source);
+      }
    }
 
    @LogMessage(id = 601789, value = "User {} is getting the number of messages received on target resource: {}", level = LogMessage.Level.INFO)
@@ -2815,49 +3232,70 @@ public interface AuditLogger {
    void copyMessage(String user, Object source, String args);
 
    static void getMessagesSent(Object source) {
-      BASE_LOGGER.getMessagesSent(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMessagesSent(caller, source);
+      }
    }
 
    @LogMessage(id = 601791, value = "User {} is getting the number of messages sent on target resource: {}", level = LogMessage.Level.INFO)
    void getMessagesSent(String user, Object source);
 
    static void getMaxPageReadBytes(Object source) {
-      BASE_LOGGER.getMaxPageReadBytes(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMaxPageReadBytes(caller, source);
+      }
    }
 
    @LogMessage(id = 601792, value = "User {} is getting maxPageReadBytes on target resource: {}", level = LogMessage.Level.INFO)
    void getMaxPageReadBytes(String user, Object source);
 
    static void getMaxPageReadMessages(Object source) {
-      BASE_LOGGER.getMaxPageReadMessages(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getMaxPageReadMessages(caller, source);
+      }
    }
 
    @LogMessage(id = 601793, value = "User {} is getting maxPageReadMessages on target resource: {}", level = LogMessage.Level.INFO)
    void getMaxPageReadMessages(String user, Object source);
 
    static void getPrefetchPageMessages(Object source) {
-      BASE_LOGGER.getPrefetchPageMessages(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getPrefetchPageMessages(caller, source);
+      }
    }
 
    @LogMessage(id = 601794, value = "User {} is getting prefetchPageMessages on target resource: {}", level = LogMessage.Level.INFO)
    void getPrefetchPageMessages(String user, Object source);
 
    static void getPrefetchPageBytes(Object source) {
-      BASE_LOGGER.getPrefetchPageBytes(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getPrefetchPageBytes(caller, source);
+      }
    }
 
    @LogMessage(id = 601795, value = "User {} is getting prefetchPageBytes on target resource: {}", level = LogMessage.Level.INFO)
    void getPrefetchPageBytes(String user, Object source);
 
    static void getSessionCount(Object source, Object... args) {
-      BASE_LOGGER.getSessionCount(getCaller(), source, parametersList(args));
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getSessionCount(caller, source, parametersList(args));
+      }
    }
 
    @LogMessage(id = 601796, value = "User {} is getting session count on target resource: {} {}", level = LogMessage.Level.INFO)
    void getSessionCount(String user, Object source, String args);
 
    static void getTotalSessionCount(Object source) {
-      BASE_LOGGER.getTotalSessionCount(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getTotalSessionCount(caller, source);
+      }
    }
 
    @LogMessage(id = 601797, value = "User {} is getting total session count on target resource: {}", level = LogMessage.Level.INFO)
@@ -2871,7 +3309,10 @@ public interface AuditLogger {
    void exportConfigAsProperties(String user, Object source);
 
    static void getPendingMirrorAcks(Object source) {
-      BASE_LOGGER.getPendingMirrorAcks(getCaller(), source);
+      final String caller = getCaller();
+      if (shouldLog(caller)) {
+         BASE_LOGGER.getPendingMirrorAcks(caller, source);
+      }
    }
 
    @LogMessage(id = 601799, value = "User {} is getting PendingMirrorAcks on target resource: {}", level = LogMessage.Level.INFO)
